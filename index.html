@@ -12,6 +12,9 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <h1 class="logo">Blox <span>Bux</span></h1>
+
+    <button id="adminBtn" class="admin-toggle">Painel Admin</button>
+
     <div class="tabs">
       <button id="tabProfile" class="active">Perfil</button>
       <button id="tabProducts">Produtos</button>
@@ -24,14 +27,18 @@
     </div>
 
     <div class="tabContent" id="productsTab" style="display:none;">
-      <h2>Gerenciar Produtos</h2>
-      <div id="adminActions" style="display:none;">
-        <input type="text" id="productName" placeholder="Nome do Produto">
-        <input type="text" id="productPrice" placeholder="Preço">
-        <input type="text" id="productImage" placeholder="URL da Imagem">
-        <button id="addProductBtn">Adicionar Produto</button>
-      </div>
+      <h2>Meus Produtos</h2>
+      <p>Visualize todos os produtos disponíveis abaixo.</p>
     </div>
+
+    <div class="adminPanel" id="adminPanel" style="display:none;">
+      <h2>Admin</h2>
+      <input type="text" id="productName" placeholder="Nome do Produto">
+      <input type="text" id="productPrice" placeholder="Preço">
+      <input type="text" id="productImage" placeholder="URL da Imagem">
+      <button id="addProductBtn">Adicionar Produto</button>
+    </div>
+
   </div>
 
   <!-- Grid de Produtos -->
@@ -46,13 +53,23 @@ import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/1
 
 let currentUser = null;
 
-// Tabs
 const tabProfile = document.getElementById("tabProfile");
 const tabProducts = document.getElementById("tabProducts");
 const profileTab = document.getElementById("profileTab");
 const productsTab = document.getElementById("productsTab");
-const adminActions = document.getElementById("adminActions");
+const adminPanel = document.getElementById("adminPanel");
+const adminBtn = document.getElementById("adminBtn");
 
+// Toggle admin panel
+adminBtn.addEventListener("click", ()=>{
+  if(currentUser && currentUser.email==="marymartins5821@gmail.com"){
+    adminPanel.style.display = adminPanel.style.display==="none" ? "block" : "none";
+  }else{
+    alert("Apenas o admin pode acessar!");
+  }
+});
+
+// Tabs
 tabProfile.addEventListener("click", ()=>{
   profileTab.style.display="block"; productsTab.style.display="none"; 
   tabProfile.classList.add("active"); tabProducts.classList.remove("active");
@@ -70,7 +87,6 @@ onAuthStateChanged(auth, user=>{
   if(user){
     currentUser=user;
     document.getElementById("userEmail").innerText="Email: "+user.email;
-    if(user.email==="marymartins5821@gmail.com"){adminActions.style.display="block";}
   }else{window.location.href="login.html";}
 });
 
@@ -83,7 +99,8 @@ document.getElementById("addProductBtn").addEventListener("click", ()=>{
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
   const image = document.getElementById("productImage").value;
-  if(name && price && image){push(productsRef,{name,price,image});
+  if(name && price && image){
+    push(productsRef,{name,price,image});
     document.getElementById("productName").value="";
     document.getElementById("productPrice").value="";
     document.getElementById("productImage").value="";
