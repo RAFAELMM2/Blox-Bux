@@ -1,150 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Blox Bux</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module">
-    // ===== IMPORTS =====
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-    import { 
-      getAuth, 
-      GoogleAuthProvider, 
-      signInWithPopup, 
-      createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { 
-      getFirestore, 
-      collection, 
-      addDoc, 
-      getDocs 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+<meta charset="UTF-8">
+<title>Blox Bux</title>
+<link rel="stylesheet" href="style.css">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  addDoc 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // ===== CONFIG FIREBASE =====
-    const firebaseConfig = {
-      apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
-      authDomain: "blox-bux.firebaseapp.com",
-      databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
-      projectId: "blox-bux",
-      storageBucket: "blox-bux.appspot.com",
-      messagingSenderId: "2964601609",
-      appId: "1:2964601609:web:67ee85c8174825aee471d8",
-      measurementId: "G-W2BW6GDCSY"
-    };
+// ===== CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
+  authDomain: "blox-bux.firebaseapp.com",
+  databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
+  projectId: "blox-bux",
+  storageBucket: "blox-bux.appspot.com",
+  messagingSenderId: "2964601609",
+  appId: "1:2964601609:web:67ee85c8174825aee471d8",
+  measurementId: "G-W2BW6GDCSY"
+};
 
-    // ===== INICIALIZA =====
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+// ===== INICIALIZA =====
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-    // ===== LOGIN GOOGLE =====
-    document.getElementById("login-google").addEventListener("click", async () => {
-      try { await signInWithPopup(auth, provider); } 
-      catch (e) { alert("Erro Google: " + e.message); }
-    });
+// ===== LOGIN GOOGLE =====
+document.getElementById("login-google").addEventListener("click", async () => {
+  try { await signInWithPopup(auth, provider); } 
+  catch (e) { alert("Erro Google: " + e.message); }
+});
 
-    // ===== LOGIN EMAIL =====
-    document.getElementById("login-email").addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      try { await signInWithEmailAndPassword(auth, email, senha); } 
-      catch (e) { alert("Erro login: " + e.message); }
-    });
+// ===== LOGOUT =====
+document.getElementById("logout").addEventListener("click", async () => {
+  await signOut(auth);
+  document.getElementById("store-section").style.display = "block";
+  document.getElementById("admin-section").style.display = "none";
+});
 
-    // ===== CADASTRO EMAIL =====
-    document.getElementById("signup-email").addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      try { await createUserWithEmailAndPassword(auth, email, senha); alert("Conta criada!"); } 
-      catch (e) { alert("Erro cadastro: " + e.message); }
-    });
+// ===== MONITORAR LOGIN =====
+onAuthStateChanged(auth, user => {
+  if(user && user.email === "marymartins5821@gmail.com") {
+    document.getElementById("admin-btn").style.display = "block";
+  } else {
+    document.getElementById("admin-btn").style.display = "none";
+  }
+});
 
-    // ===== LOGOUT =====
-    document.getElementById("logout").addEventListener("click", async () => {
-      await signOut(auth);
-    });
+// ===== CARREGAR PRODUTOS =====
+async function carregarProdutos() {
+  const lista = document.getElementById("products");
+  lista.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "produtos"));
+  snapshot.forEach(doc => {
+    const produto = doc.data();
+    lista.innerHTML += `
+      <div class="product-card">
+        <div class="product-info">
+          <h3>${produto.nome}</h3>
+          <p>R$ ${produto.preco}</p>
+        </div>
+        <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(produto.nome)}%20por%20R$${produto.preco}">
+          <button class="buy-btn">Comprar</button>
+        </a>
+      </div>
+    `;
+  });
+}
+carregarProdutos();
 
-    // ===== MONITORAR LOGIN =====
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        document.getElementById("user-info").innerText = `Logado como: ${user.email}`;
-        if (user.email === "marymartins5821@gmail.com") {
-          document.getElementById("admin-panel").style.display = "block";
-        }
-        carregarProdutos();
-      } else {
-        document.getElementById("user-info").innerText = "Não logado";
-        document.getElementById("admin-panel").style.display = "none";
-      }
-    });
+// ===== ABRIR PAINEL ADMIN =====
+document.getElementById("admin-btn").addEventListener("click", () => {
+  document.getElementById("store-section").classList.add("fade-out");
+  setTimeout(() => {
+    document.getElementById("store-section").style.display = "none";
+    document.getElementById("admin-section").style.display = "block";
+    document.getElementById("admin-section").classList.add("fade-in");
+  }, 300);
+});
 
-    // ===== ADMIN ADICIONAR PRODUTO (POR LINK) =====
-    document.getElementById("product-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const nome = document.getElementById("product-name").value;
-      const preco = document.getElementById("product-price").value;
-      const foto = document.getElementById("product-photo").value;
+// ===== ADICIONAR PRODUTO =====
+document.getElementById("product-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nome = document.getElementById("product-name").value;
+  const preco = document.getElementById("product-price").value;
 
-      try {
-        await addDoc(collection(db, "produtos"), { nome, preco, foto });
-        alert("Produto adicionado!");
-        e.target.reset();
-        carregarProdutos();
-      } catch (e) { alert("Erro: " + e.message); }
-    });
-
-    // ===== LOJA =====
-    async function carregarProdutos() {
-      const lista = document.getElementById("products");
-      lista.innerHTML = "";
-      const snapshot = await getDocs(collection(db, "produtos"));
-      snapshot.forEach(doc => {
-        const produto = doc.data();
-        lista.innerHTML += `
-          <div class="product">
-            <img src="${produto.foto}" alt="${produto.nome}">
-            <h3>${produto.nome}</h3>
-            <p>Preço: R$ ${produto.preco}</p>
-            <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(produto.nome)}%20por%20R$${produto.preco}">
-              <button>Comprar no WhatsApp</button>
-            </a>
-          </div>
-        `;
-      });
-    }
-  </script>
+  try {
+    await addDoc(collection(db, "produtos"), { nome, preco });
+    alert("Produto adicionado!");
+    e.target.reset();
+    carregarProdutos();
+  } catch(e) { alert("Erro: "+e.message); }
+});
+</script>
 </head>
 <body>
-  <header>
-    <h1>Blox Bux</h1>
-    <p id="user-info">Não logado</p>
+<header>
+  <h1>Blox Bux</h1>
+  <div class="auth-buttons">
     <button id="login-google">Login com Google</button>
-    <input id="email" placeholder="Email">
-    <input id="senha" type="password" placeholder="Senha">
-    <button id="login-email">Login com Email</button>
-    <button id="signup-email">Criar Conta</button>
     <button id="logout">Sair</button>
-  </header>
-
-  <div class="container">
-    <h2>Produtos</h2>
-    <div id="products" class="product-list"></div>
-
-    <div id="admin-panel" style="display:none;">
-      <h2>Adicionar Produto</h2>
-      <form id="product-form">
-        <input id="product-name" placeholder="Nome do Produto" required><br><br>
-        <input id="product-price" type="number" placeholder="Preço" required><br><br>
-        <input id="product-photo" placeholder="URL da Foto" required><br><br>
-        <button type="submit">Adicionar</button>
-      </form>
-    </div>
   </div>
+</header>
+
+<!-- LOJA -->
+<div id="store-section" class="container">
+  <h2>Produtos</h2>
+  <div id="products" class="product-list"></div>
+</div>
+
+<!-- BOTÃO ADMIN FLUTUANTE -->
+<button id="admin-btn" style="display:none;">Admin</button>
+
+<!-- PAINEL ADMIN -->
+<div id="admin-section" class="container" style="display:none;">
+  <h2>Painel Admin</h2>
+  <form id="product-form">
+    <input id="product-name" placeholder="Nome do Produto" required><br><br>
+    <input id="product-price" type="number" placeholder="Preço" required><br><br>
+    <button type="submit">Adicionar Produto</button>
+  </form>
+</div>
 </body>
 </html>
