@@ -1,190 +1,43 @@
-/* ===== Reset básico ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body.login-body{background:#0b0b0b;display:flex;justify-content:center;align-items:center;height:100vh;}
+.login-container{background:#1a1a1a;padding:40px;border-radius:15px;border:2px solid #00ff6a;display:flex;flex-direction:column;gap:15px;width:350px;}
+.login-container h1{color:#00ff6a;text-align:center;margin-bottom:20px;}
+.login-container input{padding:12px;border-radius:10px;border:1px solid #00ff6a;background:#0b0b0b;color:#fff;}
+.login-container button{padding:12px;border-radius:10px;border:none;background:#00ff6a;color:#000;font-weight:bold;cursor:pointer;transition:.3s;}
+.login-container button:hover{transform:scale(1.05);box-shadow:0 0 10px #00ff6a,0 0 20px rgba(0,255,106,0.3);}
 
-body.main-body {
-  background-color: #0b0b0b;
-  color: #fff;
-  min-height: 100vh;
-  padding: 20px;
-}
+body.main-body{background:#0b0b0b;color:#fff;padding-top:70px;}
+header{position:fixed;top:0;width:100%;background:linear-gradient(90deg,#0b0b0b,#0b0b0b 70%,#00ff6a20);display:flex;justify-content:space-between;align-items:center;padding:15px 30px;z-index:100;}
+header h1{color:#00ff6a;}
+header button{background:#ff4c4c;color:#fff;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:.3s;}
+header button:hover{transform:scale(1.05);box-shadow:0 0 10px #ff4c4c;}
 
-/* ===== HEADER ===== */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
+.tabs{display:flex;gap:15px;margin:20px;}
+.tab-btn{padding:10px 20px;border:none;border-radius:10px;background:#1a1a1a;color:#00ff6a;cursor:pointer;transition:.3s;}
+.tab-btn.active{background:#00ff6a;color:#000;transform:scale(1.05);}
+.tab-btn:hover{transform:scale(1.05);}
 
-header h1 {
-  color: #00ff6a;
-  font-size: 28px;
-}
+.tab-content{display:none;opacity:0;transition:opacity .5s;}
+.tab-content.show{display:block;opacity:1;margin:20px;}
 
-header button {
-  background-color: #00ff6a;
-  border: none;
-  padding: 8px 16px;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-}
+.product-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;max-height:70vh;overflow-y:auto;scroll-behavior:smooth;}
 
-header button:hover {
-  background-color: #00d958;
-}
+.product-card{background:#1a1a1a;border:2px solid #00ff6a;border-radius:15px;padding:15px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .3s,box-shadow .5s;}
+.product-card:hover{transform:translateY(-10px) scale(1.05);box-shadow:0 0 20px #00ff6a,0 0 40px rgba(0,255,106,0.3);}
 
-/* ===== TABS ===== */
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+.product-info h3{color:#00ff6a;margin-bottom:5px;}
+.product-info p{color:#fff;}
 
-.tab-btn {
-  padding: 8px 16px;
-  background-color: #1a1a1a;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-  color: #00ff6a;
-  font-weight: bold;
-}
+.product-buttons{display:flex;gap:10px;margin-top:10px;}
+.buy-btn,.remove-btn{padding:10px;border-radius:10px;font-weight:bold;cursor:pointer;border:none;transition:all .3s ease;box-shadow:0 0 5px #00ff6a;}
+.buy-btn{background:#00ff6a;color:#000;}
+.buy-btn:hover{box-shadow:0 0 15px #00ff6a,0 0 25px rgba(0,255,106,0.5);transform:scale(1.1);}
+.remove-btn{background:#ff4c4c;color:#fff;}
+.remove-btn:hover{box-shadow:0 0 15px #ff4c4c,0 0 25px rgba(255,76,76,0.5);transform:scale(1.1);}
 
-.tab-btn.active, .tab-btn:hover {
-  background-color: #00ff6a;
-  color: #000;
-}
-
-/* ===== TAB CONTENT ===== */
-.tab-content {
-  display: none;
-}
-
-.tab-content h2 {
-  margin-bottom: 15px;
-  color: #00ff6a;
-}
-
-/* ===== PRODUTOS ===== */
-.product-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
-  gap: 20px;
-}
-
-.product-card {
-  background-color: #1a1a1a;
-  border: 2px solid #00ff6a;
-  border-radius: 10px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 15px #00ff6a;
-}
-
-.product-info h3 {
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-
-.product-info p {
-  font-size: 16px;
-  color: #00ff6a;
-}
-
-/* ===== BOTÕES PRODUTOS ===== */
-.product-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.buy-btn, .remove-btn {
-  flex: 1;
-  margin: 2px;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.buy-btn {
-  background-color: #00ff6a;
-  color: #000;
-}
-
-.buy-btn:hover {
-  background-color: #00d958;
-}
-
-.remove-btn {
-  background-color: #ff4c4c;
-  color: #fff;
-}
-
-.remove-btn:hover {
-  background-color: #e03b3b;
-}
-
-/* ===== PAINEL ADMIN ===== */
-.admin-panel {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #1a1a1a;
-  border: 2px solid #00ff6a;
-  border-radius: 10px;
-  display: none;
-}
-
-.admin-panel.show-admin {
-  display: block;
-}
-
-.admin-panel form input, .admin-panel form button {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #00ff6a;
-  background-color: #0b0b0b;
-  color: #00ff6a;
-}
-
-.admin-panel form button {
-  background-color: #00ff6a;
-  color: #000;
-  border: none;
-  cursor: pointer;
-}
-
-.admin-panel form button:hover {
-  background-color: #00d958;
-}
-
-/* ===== RESPONSIVO ===== */
-@media (max-width: 600px) {
-  .product-list {
-    grid-template-columns: 1fr;
-  }
-  
-  .tabs {
-    flex-direction: column;
-  }
-}
+.admin-panel{position:fixed;right:0;top:70px;width:350px;background:#1a1a1a;padding:20px;border-left:2px solid #00ff6a;transform:translateX(100%);transition:transform .5s;}
+.admin-panel.show-admin{transform:translateX(0%);}
+.admin-panel h2{color:#00ff6a;margin-bottom:15px;}
+.admin-panel input{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;border:1px solid #00ff6a;background:#0b0b0b;color:#fff;}
+.admin-panel button{width:100%;padding:12px;background:#00ff6a;color:#000;border:none;border-radius:10px;font-weight:bold;cursor:pointer;transition:.3s;}
+.admin-panel button:hover{transform:scale(1.05);box-shadow:0 0 10px #00ff6a,0 0 20px rgba(0,255,106,0.3);}
