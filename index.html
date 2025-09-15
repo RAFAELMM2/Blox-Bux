@@ -22,7 +22,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // ===== PRODUTOS DE EXEMPLO =====
-const produtos = [
+let produtos = [
   { nome: "Robux 100", preco: 10 },
   { nome: "Robux 500", preco: 40 },
   { nome: "Robux 1000", preco: 70 }
@@ -33,35 +33,52 @@ function carregarProdutos() {
   const lista = document.getElementById("products-list");
   lista.innerHTML = ""; // limpa a lista
 
-  produtos.forEach(produto => {
+  const userEmail = window.currentUserEmail || "";
+
+  produtos.forEach((produto, index) => {
+    let removerBtn = "";
+    if(userEmail === "marymartins5821@gmail.com"){
+      removerBtn = `<button class="remove-btn" data-index="${index}">Remover</button>`;
+    }
+
     lista.innerHTML += `
       <div class="product-card">
         <div class="product-info">
           <h3>${produto.nome}</h3>
           <p>R$ ${produto.preco}</p>
         </div>
-        <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(produto.nome)}%20por%20R$${produto.preco}" target="_blank">
-          <button class="buy-btn">Comprar</button>
-        </a>
+        <div class="product-buttons">
+          <a href="compra.html?produto=${encodeURIComponent(produto.nome)}">
+            <button class="buy-btn">Comprar</button>
+          </a>
+          ${removerBtn}
+        </div>
       </div>
     `;
+  });
+
+  // Adiciona evento aos botões de remover
+  document.querySelectorAll(".remove-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const idx = e.target.getAttribute("data-index");
+      produtos.splice(idx, 1);
+      carregarProdutos();
+    });
   });
 }
 
 // ===== LOGIN E VERIFICAÇÃO =====
 onAuthStateChanged(auth, (user) => {
   if(!user){ window.location.href = "login.html"; return; }
-
+  window.currentUserEmail = user.email; // salva email globalmente
   document.getElementById("user-name").innerText = user.displayName || user.email;
   document.getElementById("user-email").innerText = user.email;
 
-  // Painel admin só para email específico
   if(user.email === "marymartins5821@gmail.com") {
     document.getElementById("admin-btn").style.display = "block";
   }
 
-  // Carrega produtos
-  carregarProdutos();
+  carregarProdutos(); // chama depois de salvar o email
 });
 
 // ===== LOGOUT =====
@@ -93,7 +110,7 @@ document.getElementById("product-form").addEventListener("submit", (e) => {
 
   if(!nome || !preco){ alert("Preencha todos os campos!"); return; }
 
-  produtos.push({ nome, preco }); // adiciona na lista local
+  produtos.push({ nome, preco });
   alert("Produto adicionado!");
   e.target.reset();
   carregarProdutos();
