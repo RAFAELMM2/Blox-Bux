@@ -1,144 +1,136 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Blox Bux</title>
-<link rel="stylesheet" href="style.css">
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
-  authDomain: "blox-bux.firebaseapp.com",
-  projectId: "blox-bux",
-  storageBucket: "blox-bux.appspot.com",
-  messagingSenderId: "2964601609",
-  appId: "1:2964601609:web:67ee85c8174825aee471d8"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-
-// Verifica login
-onAuthStateChanged(auth, user => {
-  if (!user) { window.location.href = "login.html"; return; }
-  window.currentUserEmail = user.email;
-  document.getElementById("user-name").innerText = user.displayName || user.email;
-  document.getElementById("user-email").innerText = user.email;
-  if (user.email === "marymartins5821@gmail.com") {
-    document.getElementById("admin-btn").style.display = "block";
-  }
-  carregarProdutos();
-});
-
-// Logout
-document.getElementById("logout").addEventListener("click", () => {
-  signOut(auth).then(() => window.location.href = "login.html");
-});
-
-// Abas
-function showTab(tab){
-  document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("show"));
-  document.getElementById(tab).classList.add("show");
-  document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.remove("active"));
-  document.getElementById("tab-"+tab).classList.add("active");
-}
-document.getElementById("tab-account").addEventListener("click", ()=>showTab("account"));
-document.getElementById("tab-products").addEventListener("click", ()=>showTab("products"));
-
-// Painel Admin
-document.getElementById("admin-btn").addEventListener("click", ()=>{
-  document.getElementById("admin-section").classList.toggle("show-admin");
-});
-
-// Carregar produtos
-function carregarProdutos(){
-  const lista = document.getElementById("products-list");
-  const userEmail = window.currentUserEmail||"";
-  onValue(ref(db,'produtos/'), snapshot => {
-    const data = snapshot.val() || {};
-    lista.innerHTML = "";
-    Object.keys(data).forEach(key=>{
-      const produto = data[key];
-      let removerBtn = "";
-      if(userEmail === "marymartins5821@gmail.com"){
-        removerBtn = `<button class="remove-btn" data-key="${key}">Remover</button>`;
-      }
-      lista.innerHTML += `
-        <div class="product-card">
-          <div class="product-info">
-            <h3>${produto.nome}</h3>
-            <p>R$ ${produto.preco}</p>
-          </div>
-          <div class="product-buttons">
-            <a href="compra.html?produto=${encodeURIComponent(produto.nome)}">
-              <button class="buy-btn">Comprar</button>
-            </a>
-            ${removerBtn}
-          </div>
-        </div>
-      `;
-    });
-    document.querySelectorAll(".remove-btn").forEach(btn=>{
-      btn.addEventListener("click", e=>{
-        const key = e.target.getAttribute("data-key");
-        remove(ref(db,'produtos/'+key));
-      });
-    });
-  });
-}
-
-// Adicionar produto (Admin)
-document.getElementById("product-form").addEventListener("submit", e=>{
-  e.preventDefault();
-  const nome = document.getElementById("product-name").value;
-  const preco = document.getElementById("product-price").value;
-  if(!nome || !preco){ alert("Preencha todos os campos!"); return; }
-  const newKey = Date.now();
-  set(ref(db,'produtos/'+newKey),{nome,preco})
-    .then(()=>{ document.getElementById("product-form").reset(); })
-    .catch(err=>alert(err.message));
-});
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blox Bux - Loja</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase-config.js"></script>
 </head>
 <body class="main-body">
 
-<header>
-  <h1>Blox Bux</h1>
-  <button id="logout">Sair</button>
-</header>
+  <!-- Navbar -->
+  <header class="navbar">
+    <h1 class="logo">Blox Bux</h1>
+    <nav>
+      <button class="nav-btn" onclick="mostrarAba('conta')">Minha Conta</button>
+      <button class="nav-btn" onclick="mostrarAba('produtos')">Produtos</button>
+      <button class="nav-btn logout-btn" id="logout">Sair</button>
+    </nav>
+  </header>
 
-<div class="tabs">
-  <button id="tab-account" class="tab-btn active">Minha Conta</button>
-  <button id="tab-products" class="tab-btn">Produtos</button>
-  <button id="admin-btn" style="display:none;">Admin</button>
-</div>
+  <!-- Conteúdo -->
+  <main>
+    <!-- Aba Conta -->
+    <section id="conta" class="aba ativa">
+      <h2>Minha Conta</h2>
+      <p><strong>Email:</strong> <span id="user-email"></span></p>
+      <p><strong>Status:</strong> <span id="user-status"></span></p>
+    </section>
 
-<!-- Abas -->
-<div id="account" class="tab-content show">
-  <h2>Minha Conta</h2>
-  <p>Nome: <span id="user-name"></span></p>
-  <p>Email: <span id="user-email"></span></p>
-</div>
+    <!-- Aba Produtos -->
+    <section id="produtos" class="aba">
+      <h2>Produtos</h2>
+      <div id="products-list" class="products-grid"></div>
 
-<div id="products" class="tab-content">
-  <h2>Produtos</h2>
-  <div id="products-list" class="product-list"></div>
-</div>
+      <!-- Admin apenas -->
+      <div id="admin-panel" class="admin-panel hidden">
+        <h3>Adicionar Produto</h3>
+        <form id="product-form">
+          <input type="text" id="product-name" placeholder="Nome do Produto" required>
+          <input type="number" id="product-price" placeholder="Preço (R$)" required>
+          <button type="submit" class="btn">Adicionar</button>
+        </form>
+      </div>
+    </section>
+  </main>
 
-<!-- Painel Admin -->
-<div id="admin-section" class="admin-panel">
-  <h2>Painel Admin</h2>
-  <form id="product-form">
-    <input id="product-name" placeholder="Nome do Produto" required><br><br>
-    <input id="product-price" type="number" placeholder="Preço" required><br><br>
-    <button type="submit">Adicionar Produto</button>
-  </form>
-</div>
+  <script type="module">
+    import { auth, db, ref, set, onValue, remove, signOut } from "./firebase-config.js";
 
+    const userEmailSpan = document.getElementById("user-email");
+    const userStatusSpan = document.getElementById("user-status");
+    const productsList = document.getElementById("products-list");
+    const adminPanel = document.getElementById("admin-panel");
+
+    let currentUserEmail = "";
+
+    // Alternar abas
+    window.mostrarAba = (aba) => {
+      document.querySelectorAll(".aba").forEach(sec => sec.classList.remove("ativa"));
+      document.getElementById(aba).classList.add("ativa");
+    };
+
+    // Autenticação
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUserEmail = user.email;
+        userEmailSpan.textContent = user.email;
+        userStatusSpan.textContent = user.email === "marymartins5821@gmail.com" ? "Administrador" : "Usuário";
+
+        if (user.email === "marymartins5821@gmail.com") {
+          adminPanel.classList.remove("hidden");
+        }
+
+        carregarProdutos();
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    // Logout
+    document.getElementById("logout").addEventListener("click", () => {
+      signOut(auth).then(() => window.location.href = "login.html");
+    });
+
+    // Adicionar produto
+    document.getElementById("product-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const nome = document.getElementById("product-name").value;
+      const preco = document.getElementById("product-price").value;
+
+      const newKey = Date.now();
+      set(ref(db, "produtos/" + newKey), { nome, preco }).then(() => {
+        e.target.reset();
+      });
+    });
+
+    // Carregar produtos
+    function carregarProdutos() {
+      onValue(ref(db, "produtos/"), snapshot => {
+        const data = snapshot.val() || {};
+        productsList.innerHTML = "";
+
+        Object.keys(data).forEach(key => {
+          const produto = data[key];
+          let removerBtn = "";
+
+          if (currentUserEmail === "marymartins5821@gmail.com") {
+            removerBtn = `<button class="btn secondary remove-btn" data-key="${key}">Remover</button>`;
+          }
+
+          productsList.innerHTML += `
+            <div class="product-card">
+              <h3>${produto.nome}</h3>
+              <p>R$ ${produto.preco}</p>
+              <div class="product-buttons">
+                <a href="compra.html?produto=${encodeURIComponent(produto.nome)}">
+                  <button class="btn">Comprar</button>
+                </a>
+                ${removerBtn}
+              </div>
+            </div>
+          `;
+        });
+
+        document.querySelectorAll(".remove-btn").forEach(btn => {
+          btn.addEventListener("click", e => {
+            const key = e.target.getAttribute("data-key");
+            remove(ref(db, "produtos/" + key));
+          });
+        });
+      });
+    }
+  </script>
 </body>
 </html>
