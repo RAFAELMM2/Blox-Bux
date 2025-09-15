@@ -8,7 +8,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ===== CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
   authDomain: "blox-bux.firebaseapp.com",
@@ -22,29 +21,26 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// LOGIN
-document.getElementById("login-btn").addEventListener("click", () => {
+document.getElementById("login-btn").addEventListener("click", ()=>{
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
-  signInWithEmailAndPassword(auth, email, senha)
-    .then(() => window.location.href = "index.html")
-    .catch(err => alert(err.message));
+  signInWithEmailAndPassword(auth,email,senha)
+    .then(()=>window.location.href="index.html")
+    .catch(err=>alert(err.message));
 });
 
-// CADASTRAR
-document.getElementById("signup-btn").addEventListener("click", () => {
+document.getElementById("signup-btn").addEventListener("click", ()=>{
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
-  createUserWithEmailAndPassword(auth, email, senha)
-    .then(() => window.location.href = "index.html")
-    .catch(err => alert(err.message));
+  createUserWithEmailAndPassword(auth,email,senha)
+    .then(()=>window.location.href="index.html")
+    .catch(err=>alert(err.message));
 });
 
-// GOOGLE
-document.getElementById("google-btn").addEventListener("click", () => {
-  signInWithPopup(auth, provider)
-    .then(() => window.location.href = "index.html")
-    .catch(err => alert(err.message));
+document.getElementById("google-btn").addEventListener("click", ()=>{
+  signInWithPopup(auth,provider)
+    .then(()=>window.location.href="index.html")
+    .catch(err=>alert(err.message));
 });
 </script>
 </head>
