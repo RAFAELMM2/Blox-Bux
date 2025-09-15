@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Blox Bux - Login</title>
+<link rel="stylesheet" href="style.css">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+// ===== CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
+  authDomain: "blox-bux.firebaseapp.com",
+  databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
+  projectId: "blox-bux",
+  storageBucket: "blox-bux.appspot.com",
+  messagingSenderId: "2964601609",
+  appId: "1:2964601609:web:67ee85c8174825aee471d8",
+  measurementId: "G-W2BW6GDCSY"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// LOGIN GOOGLE
+document.getElementById("login-google").addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, provider);
+    window.location.href = "index.html";
+  } catch (e) { alert("Erro Google: "+e.message); }
+});
+
+// LOGIN EMAIL/PASSWORD
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "index.html";
+  } catch(e) { alert("Erro: "+e.message); }
+});
+</script>
+</head>
+<body class="login-body">
+<div class="login-box">
+  <h2>Blox Bux</h2>
+  <form id="login-form">
+    <input type="email" id="email" placeholder="Email" required><br><br>
+    <input type="password" id="password" placeholder="Senha" required><br><br>
+    <button type="submit">Login</button>
+  </form>
+  <hr>
+  <button id="login-google">Login com Google</button>
+</div>
+</body>
+</html>
