@@ -1,59 +1,80 @@
-/* ===== BODY E HEADER ===== */
-body {
+/* ===== BODY ===== */
+body.main-body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background-color: #f2f2f2;
-  color: #333;
+  background-color: #121212;
+  color: #00ff7f;
   transition: background 0.3s;
 }
 
+/* ===== HEADER ===== */
 header {
-  background: linear-gradient(90deg, #4b6cb7, #182848);
+  background-color: #1e1e1e;
   padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #fff;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 2.4em;
-  font-weight: bold;
-  text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
-}
+header h1 { color: #00ff7f; }
 
-header .auth-buttons button {
-  margin-left: 8px;
-  padding: 10px 14px;
+header button {
+  background-color: #00ff7f;
+  color: #121212;
   border: none;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #00bfff;
-  color: #fff;
+  font-weight: bold;
+}
+
+header button:hover { background-color: #00cc5c; }
+
+/* ===== ABAS ===== */
+.tabs {
+  display: flex;
+  justify-content: start;
+  margin: 20px;
+  gap: 10px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background-color: #1e1e1e;
+  color: #00ff7f;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
   font-weight: bold;
   transition: 0.3s;
 }
 
-header .auth-buttons button:hover {
-  background-color: #0095cc;
+.tab-btn.active { background-color: #00ff7f; color: #121212; }
+.tab-btn:hover { transform: scale(1.05); }
+
+/* ===== ABAS CONTEÚDO ===== */
+.tab-content {
+  background-color: #1e1e1e;
+  padding: 20px;
+  margin: 0 20px 20px 20px;
+  border-radius: 10px;
+  animation: fadeIn 0.4s;
 }
 
-/* ===== CARDS PRODUTOS ===== */
+/* ===== PRODUTOS ===== */
 .product-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
 .product-card {
-  background: linear-gradient(145deg, #ffffff, #e0e0e0);
-  border-radius: 15px;
+  background-color: #2a2a2a;
+  border: 2px solid #00ff7f;
+  border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
+  transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
   overflow: hidden;
 }
@@ -65,9 +86,9 @@ header .auth-buttons button:hover {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+  background: linear-gradient(120deg, rgba(0,255,127,0.2), rgba(0,255,127,0));
   transform: rotate(45deg);
-  transition: all 0.5s;
+  transition: all 0.6s;
 }
 
 .product-card:hover::before {
@@ -76,118 +97,110 @@ header .auth-buttons button:hover {
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.25);
-  background: linear-gradient(145deg, #f0f0f5, #dcdce6);
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px #00ff7f;
 }
 
-.product-info h3 {
-  font-size: 1.4em;
-  color: #182848;
-  margin: 0 0 10px;
-  font-weight: bold;
-}
+.product-info h3, .product-info p { margin: 5px 0; }
 
-.product-info p {
-  font-size: 1.2em;
-  color: #4b6cb7;
-  font-weight: bold;
-  margin: 0 0 15px;
-}
-
+/* ===== BOTÃO COMPRAR ===== */
 .buy-btn {
-  padding: 12px 25px;
+  background-color: #00ff7f;
+  color: #121212;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  animation: pulse 2s infinite;
+}
+
+.buy-btn:hover { background-color: #00cc5c; transform: scale(1.05); }
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #00ff7f; }
+  50% { box-shadow: 0 0 15px #00ff7f; }
+  100% { box-shadow: 0 0 5px #00ff7f; }
+}
+
+/* ===== ADMIN ===== */
+.admin-panel {
+  display: none;
+  background-color: #2a2a2a;
+  border: 2px solid #00ff7f;
+  padding: 20px;
+  margin: 20px;
   border-radius: 12px;
-  border: none;
-  background-color: #ff4757;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
+  animation: fadeIn 0.4s;
 }
 
-.buy-btn:hover {
-  background-color: #e84118;
-  transform: scale(1.08);
+.admin-panel.show-admin { display: block; }
+
+.admin-panel input {
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #00ff7f;
+  background-color: #121212;
+  color: #00ff7f;
 }
 
-/* ===== ADMIN BOTÃO FLUTUANTE ===== */
-#admin-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #ff4757;
-  color: #fff;
-  padding: 14px 18px;
-  border-radius: 50px;
-  font-weight: bold;
+.admin-panel button {
+  padding: 10px 15px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-  transition: 0.3s;
+  background-color: #00ff7f;
+  color: #121212;
+  font-weight: bold;
 }
 
-#admin-btn:hover {
-  background-color: #e84118;
-  transform: scale(1.1);
+.admin-panel button:hover { background-color: #00cc5c; }
+
+/* ===== LOGIN ===== */
+body.login-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #00ff7f;
 }
 
-/* ===== PAINEL ADMIN ===== */
-#admin-section {
-  background-color: #fff;
-  padding: 30px;
+.login-box {
+  background-color: #1e1e1e;
+  padding: 40px;
   border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-  transition: all 0.3s;
-}
-
-#admin-section h2 {
-  color: #4b6cb7;
-  margin-bottom: 20px;
+  box-shadow: 0 0 20px #00ff7f;
   text-align: center;
 }
 
-#admin-section input {
+.login-box input {
   width: 80%;
-  padding: 12px;
+  padding: 10px;
   margin: 10px 0;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #00ff7f;
+  background-color: #121212;
+  color: #00ff7f;
 }
 
-#admin-section button {
-  background-color: #00bfff;
-  color: #fff;
-  padding: 12px 18px;
-  margin-top: 15px;
-  border-radius: 10px;
+.login-box button {
+  padding: 10px 15px;
+  border-radius: 8px;
   border: none;
-  cursor: pointer;
+  background-color: #00ff7f;
+  color: #121212;
   font-weight: bold;
-  transition: 0.3s;
+  cursor: pointer;
 }
 
-#admin-section button:hover {
-  background-color: #0095cc;
-  transform: scale(1.05);
-}
+.login-box button:hover { background-color: #00cc5c; }
 
-/* ===== ANIMAÇÕES DE TRANSIÇÃO ===== */
-.fade-in { animation: fadeIn 0.4s forwards; }
-.fade-out { animation: fadeOut 0.4s forwards; }
-
+/* ===== ANIMAÇÕES ===== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-10px); }
-}
-
-/* ===== RESPONSIVO ===== */
-@media(max-width: 600px) {
-  header h1 { font-size: 2em; }
-  #admin-section input { width: 100%; }
 }
