@@ -1,0 +1,150 @@
+/* ===== BODY ===== */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* ===== HEADER ===== */
+header {
+  background-color: #1f1f1f;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2em;
+  color: #25d366;
+}
+
+header p {
+  margin: 5px 0 10px;
+}
+
+header input {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  margin: 3px;
+}
+
+header button {
+  padding: 8px 12px;
+  margin: 3px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #25d366;
+  color: #fff;
+  transition: 0.3s;
+}
+
+header button:hover {
+  background-color: #128c7e;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 30px auto;
+}
+
+/* ===== PRODUTOS ===== */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.product {
+  background-color: #1f1f1f;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.7);
+}
+
+.product img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.product h3 {
+  margin: 10px 0 5px;
+  color: #25d366;
+}
+
+.product p {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.product button {
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-color: #25d366;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.product button:hover {
+  background-color: #128c7e;
+}
+
+/* ===== ADMIN PANEL ===== */
+#admin-panel {
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 40px;
+}
+
+#admin-panel h2 {
+  color: #25d366;
+}
+
+#admin-panel input {
+  width: 80%;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+#admin-panel button {
+  background-color: #25d366;
+  color: #fff;
+  padding: 10px 15px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+#admin-panel button:hover {
+  background-color: #128c7e;
+}
+
+/* ===== RESPONSIVO ===== */
+@media(max-width: 600px) {
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  #admin-panel input {
+    width: 100%;
+  }
+}
