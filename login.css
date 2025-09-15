@@ -1,0 +1,94 @@
+/* Estilo global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+  color: white;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.card {
+  background: #111;
+  border: 2px solid #00ff88;
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 0 20px #00ff8855;
+  transition: 0.3s;
+}
+
+.card.hidden {
+  display: none;
+}
+
+.title {
+  font-size: 2rem;
+  color: #00ff88;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #aaa;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+}
+
+input:focus {
+  box-shadow: 0 0 8px #00ff88;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #00ff88;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #00cc66;
+  transform: scale(1.05);
+}
+
+.switch {
+  margin-top: 15px;
+  color: #bbb;
+}
+
+.switch a {
+  color: #00ff88;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.switch a:hover {
+  text-decoration: underline;
+}
