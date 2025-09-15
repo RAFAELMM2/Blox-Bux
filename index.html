@@ -7,81 +7,93 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // ===== CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
   authDomain: "blox-bux.firebaseapp.com",
-  databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
   projectId: "blox-bux",
   storageBucket: "blox-bux.appspot.com",
   messagingSenderId: "2964601609",
-  appId: "1:2964601609:web:67ee85c8174825aee471d8",
-  measurementId: "G-W2BW6GDCSY"
+  appId: "1:2964601609:web:67ee85c8174825aee471d8"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-// VERIFICAR LOGIN
-onAuthStateChanged(auth, user => {
-  if(!user) { window.location.href = "login.html"; return; }
-  document.getElementById("user-name").innerText = user.displayName || user.email;
-  document.getElementById("user-email").innerText = user.email;
-  if(user.email === "marymartins5821@gmail.com") {
-    document.getElementById("admin-btn").style.display = "block";
-  }
-});
+// ===== PRODUTOS DE EXEMPLO =====
+const produtos = [
+  { nome: "Robux 100", preco: 10 },
+  { nome: "Robux 500", preco: 40 },
+  { nome: "Robux 1000", preco: 70 }
+];
 
-// LOGOUT
-document.getElementById("logout").addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "login.html";
-});
-
-// ABAS
-function showTab(tab) {
-  document.querySelectorAll(".tab-content").forEach(c => c.style.display = "none");
-  document.getElementById(tab).style.display = "block";
-}
-document.getElementById("tab-account").addEventListener("click", () => showTab("account"));
-document.getElementById("tab-products").addEventListener("click", () => showTab("products"));
-
-// CARREGAR PRODUTOS
-async function carregarProdutos() {
+// ===== FUNÇÃO CARREGAR PRODUTOS =====
+function carregarProdutos() {
   const lista = document.getElementById("products-list");
-  lista.innerHTML = "";
-  const snapshot = await getDocs(collection(db, "produtos"));
-  snapshot.forEach(doc => {
-    const produto = doc.data();
+  lista.innerHTML = ""; // limpa a lista
+
+  produtos.forEach(produto => {
     lista.innerHTML += `
       <div class="product-card">
         <div class="product-info">
           <h3>${produto.nome}</h3>
           <p>R$ ${produto.preco}</p>
         </div>
-        <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(produto.nome)}%20por%20R$${produto.preco}">
+        <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(produto.nome)}%20por%20R$${produto.preco}" target="_blank">
           <button class="buy-btn">Comprar</button>
         </a>
       </div>
     `;
   });
 }
-carregarProdutos();
 
-// PAINEL ADMIN
+// ===== LOGIN E VERIFICAÇÃO =====
+onAuthStateChanged(auth, (user) => {
+  if(!user){ window.location.href = "login.html"; return; }
+
+  document.getElementById("user-name").innerText = user.displayName || user.email;
+  document.getElementById("user-email").innerText = user.email;
+
+  // Painel admin só para email específico
+  if(user.email === "marymartins5821@gmail.com") {
+    document.getElementById("admin-btn").style.display = "block";
+  }
+
+  // Carrega produtos
+  carregarProdutos();
+});
+
+// ===== LOGOUT =====
+document.getElementById("logout").addEventListener("click", () => {
+  signOut(auth).then(() => { window.location.href = "login.html"; });
+});
+
+// ===== ABAS =====
+function showTab(tab) {
+  document.querySelectorAll(".tab-content").forEach(c => c.style.display = "none");
+  document.getElementById(tab).style.display = "block";
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  document.getElementById("tab-" + tab).classList.add("active");
+}
+
+document.getElementById("tab-account").addEventListener("click", () => showTab("account"));
+document.getElementById("tab-products").addEventListener("click", () => showTab("products"));
+
+// ===== PAINEL ADMIN =====
 document.getElementById("admin-btn").addEventListener("click", () => {
   document.getElementById("admin-section").classList.toggle("show-admin");
 });
 
-// ADICIONAR PRODUTO
-document.getElementById("product-form").addEventListener("submit", async (e) => {
+// Adicionar produto no painel admin
+document.getElementById("product-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const nome = document.getElementById("product-name").value;
   const preco = document.getElementById("product-price").value;
-  await addDoc(collection(db, "produtos"), { nome, preco });
+
+  if(!nome || !preco){ alert("Preencha todos os campos!"); return; }
+
+  produtos.push({ nome, preco }); // adiciona na lista local
   alert("Produto adicionado!");
   e.target.reset();
   carregarProdutos();
