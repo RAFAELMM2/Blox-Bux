@@ -1,58 +1,83 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Blox Bux - Login</title>
-<link rel="stylesheet" href="style.css">
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
-  authDomain: "blox-bux.firebaseapp.com",
-  projectId: "blox-bux",
-  storageBucket: "blox-bux.appspot.com",
-  messagingSenderId: "2964601609",
-  appId: "1:2964601609:web:67ee85c8174825aee471d8"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-document.getElementById("login-btn").addEventListener("click", ()=>{
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
-  signInWithEmailAndPassword(auth,email,senha)
-    .then(()=>window.location.href="index.html")
-    .catch(err=>alert(err.message));
-});
-
-document.getElementById("signup-btn").addEventListener("click", ()=>{
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
-  createUserWithEmailAndPassword(auth,email,senha)
-    .then(()=>window.location.href="index.html")
-    .catch(err=>alert(err.message));
-});
-
-document.getElementById("google-btn").addEventListener("click", ()=>{
-  signInWithPopup(auth,provider)
-    .then(()=>window.location.href="index.html")
-    .catch(err=>alert(err.message));
-});
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blox Bux - Login</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase-config.js"></script>
 </head>
 <body class="login-body">
-<div class="login-container">
-  <h1>Blox Bux</h1>
-  <input id="email" type="email" placeholder="Email">
-  <input id="senha" type="password" placeholder="Senha">
-  <button id="login-btn">Entrar</button>
-  <button id="signup-btn">Cadastrar-se</button>
-  <hr>
-  <button id="google-btn">Entrar com Google</button>
-</div>
+
+  <div class="login-container">
+    <h1 class="logo">Blox Bux</h1>
+    <p class="subtitle">Entre ou crie sua conta</p>
+
+    <form id="login-form" class="login-form">
+      <input type="email" id="email" placeholder="E-mail" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <button type="submit" class="btn">Entrar</button>
+    </form>
+
+    <button id="signup-btn" class="btn secondary">Cadastrar-se</button>
+
+    <div class="divider">ou</div>
+
+    <button id="google-login" class="btn google">
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/google.svg" alt="Google" class="google-icon">
+      Entrar com Google
+    </button>
+  </div>
+
+  <script type="module">
+    import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "./firebase-config.js";
+
+    const loginForm = document.getElementById("login-form");
+    const signupBtn = document.getElementById("signup-btn");
+    const googleBtn = document.getElementById("google-login");
+
+    // Login com email/senha
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Cadastro com email/senha
+    signupBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        alert("Preencha e-mail e senha!");
+        return;
+      }
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Login com Google
+    googleBtn.addEventListener("click", async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+        await signInWithPopup(auth, provider);
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Erro Google: " + error.message);
+      }
+    });
+  </script>
 </body>
 </html>
