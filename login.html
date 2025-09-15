@@ -3,81 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blox Bux - Login</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="firebase-config.js"></script>
+  <title>Blox-Bux | Login</title>
+  <link rel="stylesheet" href="login.css">
 </head>
-<body class="login-body">
+<body>
+  <div class="container">
+    <div class="card">
+      <h1 class="title">Blox-Bux</h1>
+      <p class="subtitle">Entre para acessar sua conta</p>
 
-  <div class="login-container">
-    <h1 class="logo">Blox Bux</h1>
-    <p class="subtitle">Entre ou crie sua conta</p>
+      <!-- Formulário de Login -->
+      <input type="email" id="email" placeholder="E-mail">
+      <input type="password" id="senha" placeholder="Senha">
 
-    <form id="login-form" class="login-form">
-      <input type="email" id="email" placeholder="E-mail" required>
-      <input type="password" id="password" placeholder="Senha" required>
-      <button type="submit" class="btn">Entrar</button>
-    </form>
+      <button onclick="login()">Entrar</button>
 
-    <button id="signup-btn" class="btn secondary">Cadastrar-se</button>
+      <p class="switch">
+        Não tem conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>
+      </p>
+    </div>
 
-    <div class="divider">ou</div>
-
-    <button id="google-login" class="btn google">
-      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/google.svg" alt="Google" class="google-icon">
-      Entrar com Google
-    </button>
+    <!-- Formulário de Cadastro -->
+    <div class="card hidden" id="cadastroCard">
+      <h1 class="title">Criar Conta</h1>
+      <input type="email" id="emailCadastro" placeholder="E-mail">
+      <input type="password" id="senhaCadastro" placeholder="Senha">
+      <button onclick="cadastrar()">Cadastrar</button>
+      <p class="switch">
+        Já tem conta? <a href="#" onclick="mostrarLogin()">Fazer login</a>
+      </p>
+    </div>
   </div>
 
-  <script type="module">
-    import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "./firebase-config.js";
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
 
-    const loginForm = document.getElementById("login-form");
-    const signupBtn = document.getElementById("signup-btn");
-    const googleBtn = document.getElementById("google-login");
+  <script>
+    const auth = firebase.auth();
 
-    // Login com email/senha
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    function login() {
       const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const senha = document.getElementById("senha").value;
 
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "index.html";
-      } catch (error) {
-        alert("Erro: " + error.message);
-      }
-    });
+      auth.signInWithEmailAndPassword(email, senha)
+        .then(() => {
+          window.location.href = "index.html";
+        })
+        .catch(err => alert("Erro: " + err.message));
+    }
 
-    // Cadastro com email/senha
-    signupBtn.addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    function cadastrar() {
+      const email = document.getElementById("emailCadastro").value;
+      const senha = document.getElementById("senhaCadastro").value;
 
-      if (!email || !password) {
-        alert("Preencha e-mail e senha!");
-        return;
-      }
+      auth.createUserWithEmailAndPassword(email, senha)
+        .then(() => {
+          alert("Conta criada com sucesso!");
+          mostrarLogin();
+        })
+        .catch(err => alert("Erro: " + err.message));
+    }
 
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        window.location.href = "index.html";
-      } catch (error) {
-        alert("Erro: " + error.message);
-      }
-    });
+    function mostrarCadastro() {
+      document.querySelector(".card").classList.add("hidden");
+      document.getElementById("cadastroCard").classList.remove("hidden");
+    }
 
-    // Login com Google
-    googleBtn.addEventListener("click", async () => {
-      const provider = new GoogleAuthProvider();
-      try {
-        await signInWithPopup(auth, provider);
-        window.location.href = "index.html";
-      } catch (error) {
-        alert("Erro Google: " + error.message);
-      }
-    });
+    function mostrarLogin() {
+      document.getElementById("cadastroCard").classList.add("hidden");
+      document.querySelector(".card").classList.remove("hidden");
+    }
   </script>
 </body>
 </html>
