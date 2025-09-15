@@ -9,6 +9,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
   authDomain: "blox-bux.firebaseapp.com",
@@ -22,19 +23,22 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// Login e verificação de admin
-onAuthStateChanged(auth,user=>{
-  if(!user){window.location.href="login.html"; return;}
+// Verifica login
+onAuthStateChanged(auth, user => {
+  if (!user) { window.location.href = "login.html"; return; }
   window.currentUserEmail = user.email;
-  document.getElementById("user-name").innerText = user.displayName||user.email;
+  document.getElementById("user-name").innerText = user.displayName || user.email;
   document.getElementById("user-email").innerText = user.email;
-  if(user.email==="marymartins5821@gmail.com"){
-    document.getElementById("admin-btn").style.display="block";
+  if (user.email === "marymartins5821@gmail.com") {
+    document.getElementById("admin-btn").style.display = "block";
   }
   carregarProdutos();
 });
 
-document.getElementById("logout").addEventListener("click", ()=>signOut(auth).then(()=>window.location.href="login.html"));
+// Logout
+document.getElementById("logout").addEventListener("click", () => {
+  signOut(auth).then(() => window.location.href = "login.html");
+});
 
 // Abas
 function showTab(tab){
@@ -46,41 +50,41 @@ function showTab(tab){
 document.getElementById("tab-account").addEventListener("click", ()=>showTab("account"));
 document.getElementById("tab-products").addEventListener("click", ()=>showTab("products"));
 
-// Painel admin
+// Painel Admin
 document.getElementById("admin-btn").addEventListener("click", ()=>{
   document.getElementById("admin-section").classList.toggle("show-admin");
 });
 
-// Produtos Firebase
+// Carregar produtos
 function carregarProdutos(){
   const lista = document.getElementById("products-list");
   const userEmail = window.currentUserEmail||"";
-  onValue(ref(db,'produtos/'),snapshot=>{
-    const data = snapshot.val()||{};
-    lista.innerHTML="";
+  onValue(ref(db,'produtos/'), snapshot => {
+    const data = snapshot.val() || {};
+    lista.innerHTML = "";
     Object.keys(data).forEach(key=>{
       const produto = data[key];
-      let removerBtn="";
-      if(userEmail==="marymartins5821@gmail.com"){
-        removerBtn=`<button class="remove-btn" data-key="${key}">Remover</button>`;
+      let removerBtn = "";
+      if(userEmail === "marymartins5821@gmail.com"){
+        removerBtn = `<button class="remove-btn" data-key="${key}">Remover</button>`;
       }
       lista.innerHTML += `
-      <div class="product-card">
-        <div class="product-info">
-          <h3>${produto.nome}</h3>
-          <p>R$ ${produto.preco}</p>
+        <div class="product-card">
+          <div class="product-info">
+            <h3>${produto.nome}</h3>
+            <p>R$ ${produto.preco}</p>
+          </div>
+          <div class="product-buttons">
+            <a href="compra.html?produto=${encodeURIComponent(produto.nome)}">
+              <button class="buy-btn">Comprar</button>
+            </a>
+            ${removerBtn}
+          </div>
         </div>
-        <div class="product-buttons">
-          <a href="compra.html?produto=${encodeURIComponent(produto.nome)}">
-            <button class="buy-btn">Comprar</button>
-          </a>
-          ${removerBtn}
-        </div>
-      </div>
       `;
     });
     document.querySelectorAll(".remove-btn").forEach(btn=>{
-      btn.addEventListener("click",e=>{
+      btn.addEventListener("click", e=>{
         const key = e.target.getAttribute("data-key");
         remove(ref(db,'produtos/'+key));
       });
@@ -88,48 +92,53 @@ function carregarProdutos(){
   });
 }
 
-// Adicionar produto
-document.getElementById("product-form").addEventListener("submit",e=>{
+// Adicionar produto (Admin)
+document.getElementById("product-form").addEventListener("submit", e=>{
   e.preventDefault();
   const nome = document.getElementById("product-name").value;
   const preco = document.getElementById("product-price").value;
-  if(!nome||!preco){alert("Preencha todos os campos!"); return;}
+  if(!nome || !preco){ alert("Preencha todos os campos!"); return; }
   const newKey = Date.now();
-  set(ref(db,'produtos/'+newKey),{nome,preco});
-  e.target.reset();
+  set(ref(db,'produtos/'+newKey),{nome,preco})
+    .then(()=>{ document.getElementById("product-form").reset(); })
+    .catch(err=>alert(err.message));
 });
 </script>
 </head>
 <body class="main-body">
+
 <header>
-<h1>Blox Bux</h1>
-<button id="logout">Sair</button>
+  <h1>Blox Bux</h1>
+  <button id="logout">Sair</button>
 </header>
 
 <div class="tabs">
-<button id="tab-account" class="tab-btn active">Minha Conta</button>
-<button id="tab-products" class="tab-btn">Produtos</button>
-<button id="admin-btn" style="display:none;">Admin</button>
+  <button id="tab-account" class="tab-btn active">Minha Conta</button>
+  <button id="tab-products" class="tab-btn">Produtos</button>
+  <button id="admin-btn" style="display:none;">Admin</button>
 </div>
 
+<!-- Abas -->
 <div id="account" class="tab-content show">
-<h2>Minha Conta</h2>
-<p>Nome: <span id="user-name"></span></p>
-<p>Email: <span id="user-email"></span></p>
+  <h2>Minha Conta</h2>
+  <p>Nome: <span id="user-name"></span></p>
+  <p>Email: <span id="user-email"></span></p>
 </div>
 
 <div id="products" class="tab-content">
-<h2>Produtos</h2>
-<div id="products-list" class="product-list"></div>
+  <h2>Produtos</h2>
+  <div id="products-list" class="product-list"></div>
 </div>
 
+<!-- Painel Admin -->
 <div id="admin-section" class="admin-panel">
-<h2>Painel Admin</h2>
-<form id="product-form">
-<input id="product-name" placeholder="Nome do Produto" required><br><br>
-<input id="product-price" type="number" placeholder="Preço" required><br><br>
-<button type="submit">Adicionar Produto</button>
-</form>
+  <h2>Painel Admin</h2>
+  <form id="product-form">
+    <input id="product-name" placeholder="Nome do Produto" required><br><br>
+    <input id="product-price" type="number" placeholder="Preço" required><br><br>
+    <button type="submit">Adicionar Produto</button>
+  </form>
 </div>
+
 </body>
 </html>
