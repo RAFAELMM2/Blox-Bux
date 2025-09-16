@@ -1,121 +1,141 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blox Bux - Loja</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blox Bux - Loja</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
+  <header>
+    <h1>Blox Bux</h1>
+    <nav>
+      <button id="logoutBtn" style="display:none;">Sair</button>
+      <button id="adminBtn" style="display:none;" onclick="toggleAdminPanel()">Painel Admin</button>
+    </nav>
+  </header>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h1 class="logo">Blox <span>Bux</span></h1>
-    <button id="adminBtn" class="admin-toggle">Painel Admin</button>
-    <div class="tabs">
-      <button id="tabProfile" class="active">Perfil</button>
-      <button id="tabProducts">Produtos</button>
-    </div>
-    <div class="tabContent" id="profileTab">
-      <h2>Minha Conta</h2>
-      <p id="userEmail">Email: -</p>
-      <button id="logoutBtn">Sair</button>
-    </div>
-    <div class="tabContent" id="productsTab" style="display:none;">
-      <h2>Produtos</h2>
-      <p>Visualize todos os produtos abaixo.</p>
-    </div>
-    <div class="adminPanel" id="adminPanel" style="display:none;">
-      <h2>Admin</h2>
-      <input type="text" id="productName" placeholder="Nome do Produto">
-      <input type="text" id="productPrice" placeholder="Preço">
-      <input type="text" id="productImage" placeholder="URL da Imagem">
-      <button id="addProductBtn">Adicionar Produto</button>
-    </div>
-  </div>
+  <aside class="sidebar">
+    <h2>Perfil</h2>
+    <p id="userEmail">Não logado</p>
+  </aside>
 
-  <!-- Grid produtos -->
-  <div class="products-grid" id="productsGrid"></div>
-</div>
+  <main>
+    <section id="productsContainer" class="products"></section>
 
-<script type="module">
-import { auth, database } from "./firebase-config.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    <section id="adminPanel" style="display:none;">
+      <h2>Painel de Administração</h2>
+      <form id="addProductForm">
+        <input type="text" id="productName" placeholder="Nome do Produto" required>
+        <input type="text" id="productPrice" placeholder="Preço" required>
+        <input type="text" id="productImage" placeholder="URL da Imagem" required>
+        <button type="submit">Adicionar Produto</button>
+      </form>
+    </section>
+  </main>
 
-let currentUser = null;
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
-const tabProfile = document.getElementById("tabProfile");
-const tabProducts = document.getElementById("tabProducts");
-const profileTab = document.getElementById("profileTab");
-const productsTab = document.getElementById("productsTab");
-const adminPanel = document.getElementById("adminPanel");
-const adminBtn = document.getElementById("adminBtn");
+  <script>
+    // Configuração Firebase
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "blox-bux.firebaseapp.com",
+      databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
+      projectId: "blox-bux",
+      storageBucket: "blox-bux.appspot.com",
+      messagingSenderId: "2964601609",
+      appId: "1:2964601609:web:67ee85c8174825aee471d8",
+    };
 
-// Toggle admin panel
-adminBtn.addEventListener("click", ()=>{
-  if(currentUser && currentUser.email==="marymartins5821@gmail.com"){
-    adminPanel.style.display = adminPanel.style.display==="none" ? "block" : "none";
-  } else {alert("Apenas o admin pode acessar!");}
-});
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
 
-// Tabs
-tabProfile.addEventListener("click", ()=>{
-  profileTab.style.display="block"; productsTab.style.display="none"; 
-  tabProfile.classList.add("active"); tabProducts.classList.remove("active");
-});
-tabProducts.addEventListener("click", ()=>{
-  productsTab.style.display="block"; profileTab.style.display="none"; 
-  tabProducts.classList.add("active"); tabProfile.classList.remove("active");
-});
+    // Lista de administradores
+    const admins = ["marymartins5821@gmail.com", "jp9877475@gmail.com"];
 
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", ()=>{signOut(auth); window.location.href="login.html";});
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminBtn = document.getElementById("adminBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const userEmail = document.getElementById("userEmail");
+    const productsContainer = document.getElementById("productsContainer");
+    const addProductForm = document.getElementById("addProductForm");
 
-// Monitor auth
-onAuthStateChanged(auth, user=>{
-  if(user){
-    currentUser=user;
-    document.getElementById("userEmail").innerText="Email: "+user.email;
-  }else{window.location.href="login.html";}
-});
+    // Controle de login
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        userEmail.textContent = user.email;
+        logoutBtn.style.display = "inline-block";
 
-// Firebase DB
-const productsRef = ref(database,"products");
-const productsGrid = document.getElementById("productsGrid");
+        if (admins.includes(user.email)) {
+          adminBtn.style.display = "inline-block";
+        }
 
-// Adicionar Produto
-document.getElementById("addProductBtn").addEventListener("click", ()=>{
-  const name = document.getElementById("productName").value;
-  const price = document.getElementById("productPrice").value;
-  const image = document.getElementById("productImage").value;
-  if(name && price && image){
-    push(productsRef,{name,price,image})
-      .then(()=>{document.getElementById("productName").value=""; document.getElementById("productPrice").value=""; document.getElementById("productImage").value="";})
-      .catch(err=>alert("Erro ao adicionar produto: "+err.message));
-  }
-});
+        carregarProdutos();
+      } else {
+        window.location.href = "login.html";
+      }
+    });
 
-// Carregar Produtos
-onValue(productsRef, snapshot=>{
-  productsGrid.innerHTML="";
-  snapshot.forEach(snap=>{
-    const prod = snap.val(); const prodId = snap.key;
-    const card = document.createElement("div"); card.classList.add("product-card");
-    card.innerHTML=`
-      <div class="img-container"><img src="${prod.image}" alt="${prod.name}"></div>
-      <h3>${prod.name}</h3>
-      <p>R$ ${prod.price}</p>
-      <button class="buyBtn" onclick="window.open('https://wa.me/5548996354447','_blank')">Comprar</button>
-      ${currentUser && currentUser.email==="marymartins5821@gmail.com"?'<button class="removeBtn">Remover</button>':""}
-    `;
-    productsGrid.appendChild(card);
-    if(currentUser && currentUser.email==="marymartins5821@gmail.com"){
-      card.querySelector(".removeBtn").addEventListener("click", ()=>{remove(ref(database,"products/"+prodId));});
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut();
+    });
+
+    function toggleAdminPanel() {
+      if (auth.currentUser && admins.includes(auth.currentUser.email)) {
+        adminPanel.style.display = adminPanel.style.display === "none" ? "block" : "none";
+      } else {
+        alert("Apenas administradores podem acessar!");
+      }
     }
-  });
-});
-</script>
+
+    // Adicionar produto
+    addProductForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("productName").value;
+      const price = document.getElementById("productPrice").value;
+      const image = document.getElementById("productImage").value;
+
+      const newProductRef = db.ref("products").push();
+      newProductRef.set({
+        name, price, image
+      }).then(() => {
+        addProductForm.reset();
+      }).catch(err => alert("Erro: " + err.message));
+    });
+
+    // Carregar produtos
+    function carregarProdutos() {
+      db.ref("products").on("value", snapshot => {
+        productsContainer.innerHTML = "";
+        snapshot.forEach(child => {
+          const product = child.val();
+          const productId = child.key;
+
+          const productCard = document.createElement("div");
+          productCard.classList.add("product-card");
+          productCard.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>Preço: R$ ${product.price}</p>
+            <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(product.name)}" target="_blank" class="buyBtn">Comprar no WhatsApp</a>
+            ${auth.currentUser && admins.includes(auth.currentUser.email) ? `<button onclick="removerProduto('${productId}')">Remover</button>` : ""}
+          `;
+          productsContainer.appendChild(productCard);
+        });
+      });
+    }
+
+    // Remover produto
+    function removerProduto(id) {
+      if (confirm("Deseja remover este produto?")) {
+        db.ref("products/" + id).remove();
+      }
+    }
+  </script>
 </body>
 </html>
