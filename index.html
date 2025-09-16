@@ -3,60 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MineBank</title>
+  <title>Blox Bux - Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Tela de Login -->
+  <!-- Login Container -->
   <div class="login-container" id="login-container">
-    <h1 class="logo">MineBank</h1>
-    <form id="login-form">
-      <input type="email" id="email" placeholder="Digite seu e-mail" required>
-      <input type="password" id="password" placeholder="Digite sua senha" required>
-      <button type="submit">Entrar</button>
-    </form>
-    <p class="cadastro">Não tem conta? <a href="#">Cadastre-se</a></p>
+    <h1 class="logo">Blox Bux</h1>
+    
+    <input type="email" id="email" placeholder="Digite seu e-mail" required>
+    <input type="password" id="password" placeholder="Digite sua senha" required>
+    
+    <button id="email-login">Entrar</button>
+    <button id="email-register">Cadastrar-se</button>
+    <button id="google-login" class="google-btn">Entrar com Google</button>
+
+    <p class="info-msg" id="login-msg"></p>
   </div>
 
-  <!-- Menu Principal -->
+  <!-- Main App -->
   <div class="app-container hidden" id="app-container">
     <header>
-      <h2>Bem-vindo ao MineBank</h2>
+      <h2>Bem-vindo ao Blox Bux</h2>
     </header>
 
     <nav class="menu">
-      <button class="menu-btn active" data-tab="saldo">💰 Saldo</button>
-      <button class="menu-btn" data-tab="depositar">📥 Depositar</button>
-      <button class="menu-btn" data-tab="sacar">📤 Sacar</button>
-      <button class="menu-btn" data-tab="perfil">👤 Perfil</button>
+      <button class="menu-btn active" data-tab="perfil">👤 Perfil</button>
+      <button class="menu-btn" data-tab="produtos">🛒 Produtos</button>
     </nav>
 
     <main class="conteudo">
-      <section class="tab active" id="saldo">
-        <h3>Seu Saldo</h3>
-        <p id="saldo-atual">R$ 0,00</p>
-      </section>
-
-      <section class="tab" id="depositar">
-        <h3>Depositar</h3>
-        <input type="number" placeholder="Valor" id="valor-deposito">
-        <button>Confirmar</button>
-      </section>
-
-      <section class="tab" id="sacar">
-        <h3>Sacar</h3>
-        <input type="number" placeholder="Valor" id="valor-saque">
-        <button>Confirmar</button>
-      </section>
-
-      <section class="tab" id="perfil">
+      <section class="tab active" id="perfil">
         <h3>Perfil</h3>
         <p>Email: <span id="user-email"></span></p>
         <button id="logout">Sair</button>
       </section>
+
+      <section class="tab" id="produtos">
+        <h3>Produtos</h3>
+        <div id="productList"></div>
+      </section>
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module" src="login.js"></script>
 </body>
 </html>
