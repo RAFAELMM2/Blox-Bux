@@ -8,55 +8,18 @@
 </head>
 <body>
   <div class="login-container">
-    <h1>Blox Bux</h1>
-    <div class="form-box">
-      <input type="email" id="email" placeholder="E-mail" required>
-      <input type="password" id="password" placeholder="Senha" required>
-      <button onclick="login()">Entrar</button>
-      <button onclick="register()">Cadastrar-se</button>
-      <button class="googleBtn" onclick="googleLogin()">Entrar com Google</button>
-    </div>
+    <h1 class="logo">Blox Bux</h1>
+
+    <input type="email" id="email" placeholder="Digite seu e-mail" required>
+    <input type="password" id="password" placeholder="Digite sua senha" required>
+
+    <button id="email-login">Entrar</button>
+    <button id="email-register">Cadastrar-se</button>
+    <button id="google-login" class="google-btn">Entrar com Google</button>
+
+    <p class="info-msg" id="login-msg"></p>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "blox-bux.firebaseapp.com",
-      projectId: "blox-bux",
-      databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert("Erro: " + err.message));
-    }
-
-    function register() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert("Erro: " + err.message));
-    }
-
-    function googleLogin() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert("Erro Google: " + err.message));
-    }
-  </script>
+  <script type="module" src="login.js"></script>
 </body>
 </html>
