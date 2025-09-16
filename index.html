@@ -1,51 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blox Bux - Login</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blox Bux</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Login Container -->
-  <div class="login-container" id="login-container">
-    <h1 class="logo">Blox Bux</h1>
-    
-    <input type="email" id="email" placeholder="Digite seu e-mail" required>
-    <input type="password" id="password" placeholder="Digite sua senha" required>
-    
-    <button id="email-login">Entrar</button>
-    <button id="email-register">Cadastrar-se</button>
-    <button id="google-login" class="google-btn">Entrar com Google</button>
+<div class="menu">
+  <h2>Blox Bux</h2>
+  <div class="profile">
+    <span id="user-email">Carregando...</span>
+    <button id="logout">Sair</button>
+  </div>
+  <button id="admin-btn">Painel Admin</button>
+</div>
 
-    <p class="info-msg" id="login-msg"></p>
+<div class="main">
+  <div id="admin-panel" class="hidden">
+    <input type="text" id="prod-name" placeholder="Nome do produto">
+    <input type="text" id="prod-desc" placeholder="Descrição">
+    <input type="number" id="prod-price" placeholder="Preço">
+    <input type="text" id="prod-img" placeholder="Imagem (URL)">
+    <button id="add-prod">Adicionar Produto</button>
   </div>
 
-  <!-- Main App -->
-  <div class="app-container hidden" id="app-container">
-    <header>
-      <h2>Bem-vindo ao Blox Bux</h2>
-    </header>
+  <div id="productList" class="product-list"></div>
+</div>
 
-    <nav class="menu">
-      <button class="menu-btn active" data-tab="perfil">👤 Perfil</button>
-      <button class="menu-btn" data-tab="produtos">🛒 Produtos</button>
-    </nav>
-
-    <main class="conteudo">
-      <section class="tab active" id="perfil">
-        <h3>Perfil</h3>
-        <p>Email: <span id="user-email"></span></p>
-        <button id="logout">Sair</button>
-      </section>
-
-      <section class="tab" id="produtos">
-        <h3>Produtos</h3>
-        <div id="productList"></div>
-      </section>
-    </main>
-  </div>
-
-  <script type="module" src="login.js"></script>
+<script type="module" src="app.js"></script>
+<script type="module" src="login.js"></script>
 </body>
 </html>
