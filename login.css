@@ -1,71 +1,47 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #000, #0a0a0a);
-  color: #e0ffe0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+body { background: linear-gradient(135deg,#0d0d0d,#222); min-height:100vh; display:flex; align-items:center; justify-content:center; }
 .login-container {
-  background: #111;
-  border: 2px solid #00ff88;
-  border-radius: 12px;
+  background: #1a1a1a;
   padding: 30px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 0 20px #00ff88;
-  animation: fadeIn 0.6s ease-in-out;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 380px;
+  text-align:center;
+  box-shadow: 0 8px 25px rgba(0,255,204,0.2);
+  animation: fadeIn 0.8s ease;
 }
-
-.login-container h1 {
-  margin-bottom: 20px;
-  color: #00ff88;
-}
-
-.form-box input {
-  display: block;
+.logo { font-size:2rem; margin-bottom:20px; color:#00ffcc; }
+input {
   width: 100%;
-  margin: 10px 0;
   padding: 12px;
-  border: none;
-  border-radius: 6px;
-  outline: none;
-  background: #222;
-  color: #fff;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #333;
+  background:#111;
+  color:#eee;
+  font-size:1rem;
+  outline:none;
+  transition:0.3s;
 }
-
-.form-box button {
-  display: block;
+input:focus { border-color:#00ffcc; transform: scale(1.03); }
+button {
   width: 100%;
-  margin: 10px 0;
-  padding: 12px;
-  background: #00ff88;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:12px;
+  background:#00ffcc;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
 }
-
-.form-box button:hover {
-  transform: scale(1.05);
-  background: #00cc66;
-}
-
-.googleBtn {
-  background: #4285F4;
-  color: #fff;
-}
-
-.googleBtn:hover {
-  background: #357ae8;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0; transform: scale(0.9);}
-  to {opacity: 1; transform: scale(1);}
+button:hover { background:#00cc99; transform: scale(1.05); }
+.google-btn { background:#db4437; color:white; }
+.google-btn:hover { background:#c23321; }
+.info-msg { color: #ff5555; margin-top: 10px; font-size: 0.9rem; }
+@keyframes fadeIn { from{opacity:0;transform:scale(0.95);} to{opacity:1;transform:scale(1);} }
+@media screen and (max-width: 450px) {
+  .login-container { padding: 25px; width: 95%; }
+  input, button { font-size: 0.95rem; }
 }
