@@ -5,137 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blox Bux - Loja</title>
   <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>Blox Bux</h1>
-    <nav>
-      <button id="logoutBtn" style="display:none;">Sair</button>
-      <button id="adminBtn" style="display:none;" onclick="toggleAdminPanel()">Painel Admin</button>
-    </nav>
-  </header>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  <aside class="sidebar">
-    <h2>Perfil</h2>
-    <p id="userEmail">Não logado</p>
-  </aside>
-
-  <main>
-    <section id="productsContainer" class="products"></section>
-
-    <section id="adminPanel" style="display:none;">
-      <h2>Painel de Administração</h2>
-      <form id="addProductForm">
-        <input type="text" id="productName" placeholder="Nome do Produto" required>
-        <input type="text" id="productPrice" placeholder="Preço" required>
-        <input type="text" id="productImage" placeholder="URL da Imagem" required>
-        <button type="submit">Adicionar Produto</button>
-      </form>
-    </section>
-  </main>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-  <script>
-    // Configuração Firebase
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
+      apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
       authDomain: "blox-bux.firebaseapp.com",
       databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
       projectId: "blox-bux",
       storageBucket: "blox-bux.appspot.com",
       messagingSenderId: "2964601609",
       appId: "1:2964601609:web:67ee85c8174825aee471d8",
+      measurementId: "G-W2BW6GDCSY"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getDatabase(app);
 
-    // Lista de administradores
-    const admins = ["marymartins5821@gmail.com", "jp9877475@gmail.com"];
+    const adminEmails = ["marymartins5821@gmail.com", "jp9877475@gmail.com"];
 
-    const logoutBtn = document.getElementById("logoutBtn");
-    const adminBtn = document.getElementById("adminBtn");
+    // Referências
+    const loginSection = document.getElementById("loginSection");
+    const mainContent = document.getElementById("mainContent");
+    const statusText = document.getElementById("status");
+    const productList = document.getElementById("productList");
     const adminPanel = document.getElementById("adminPanel");
-    const userEmail = document.getElementById("userEmail");
-    const productsContainer = document.getElementById("productsContainer");
-    const addProductForm = document.getElementById("addProductForm");
+    const adminProducts = document.getElementById("adminProducts");
 
-    // Controle de login
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        userEmail.textContent = user.email;
-        logoutBtn.style.display = "inline-block";
+    // Login com Google
+    window.loginGoogle = () => {
+      signInWithPopup(auth, provider).catch(err => alert(err.message));
+    };
 
-        if (admins.includes(user.email)) {
-          adminBtn.style.display = "inline-block";
-        }
+    // Cadastro com email
+    window.registerEmail = () => {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+      createUserWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
+    };
 
-        carregarProdutos();
-      } else {
-        window.location.href = "login.html";
-      }
-    });
+    // Login com email
+    window.loginEmail = () => {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
+    };
 
-    logoutBtn.addEventListener("click", () => {
-      auth.signOut();
-    });
-
-    function toggleAdminPanel() {
-      if (auth.currentUser && admins.includes(auth.currentUser.email)) {
-        adminPanel.style.display = adminPanel.style.display === "none" ? "block" : "none";
-      } else {
-        alert("Apenas administradores podem acessar!");
-      }
-    }
+    // Logout
+    window.logout = () => {
+      signOut(auth);
+    };
 
     // Adicionar produto
-    addProductForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = document.getElementById("productName").value;
-      const price = document.getElementById("productPrice").value;
-      const image = document.getElementById("productImage").value;
+    window.addProduct = () => {
+      const name = document.getElementById("prodName").value;
+      const price = document.getElementById("prodPrice").value;
+      const desc = document.getElementById("prodDesc").value;
 
-      const newProductRef = db.ref("products").push();
-      newProductRef.set({
-        name, price, image
-      }).then(() => {
-        addProductForm.reset();
-      }).catch(err => alert("Erro: " + err.message));
-    });
+      if (name && price) {
+        push(ref(db, "products"), { name, price, desc }).then(() => {
+          document.getElementById("prodName").value = "";
+          document.getElementById("prodPrice").value = "";
+          document.getElementById("prodDesc").value = "";
+        });
+      }
+    };
 
     // Carregar produtos
-    function carregarProdutos() {
-      db.ref("products").on("value", snapshot => {
-        productsContainer.innerHTML = "";
-        snapshot.forEach(child => {
-          const product = child.val();
-          const productId = child.key;
+    function carregarProdutos(user) {
+      onValue(ref(db, "products"), (snapshot) => {
+        productList.innerHTML = "";
+        adminProducts.innerHTML = "";
 
-          const productCard = document.createElement("div");
-          productCard.classList.add("product-card");
-          productCard.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>Preço: R$ ${product.price}</p>
-            <a href="https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(product.name)}" target="_blank" class="buyBtn">Comprar no WhatsApp</a>
-            ${auth.currentUser && admins.includes(auth.currentUser.email) ? `<button onclick="removerProduto('${productId}')">Remover</button>` : ""}
+        snapshot.forEach(child => {
+          const prod = child.val();
+          const key = child.key;
+
+          // card público
+          const div = document.createElement("div");
+          div.className = "product";
+          div.innerHTML = `
+            <h3>${prod.name}</h3>
+            <p>${prod.desc || ""}</p>
+            <p><strong>R$ ${prod.price}</strong></p>
+            <button onclick="window.open('https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(prod.name)}','_blank')">Comprar</button>
           `;
-          productsContainer.appendChild(productCard);
+          productList.appendChild(div);
+
+          // card admin
+          if (user && adminEmails.includes(user.email)) {
+            const divA = document.createElement("div");
+            divA.className = "product";
+            divA.innerHTML = `
+              <h3>${prod.name}</h3>
+              <p>${prod.desc || ""}</p>
+              <p><strong>R$ ${prod.price}</strong></p>
+              <button onclick="remove(ref(db, 'products/${key}'))">Remover</button>
+            `;
+            adminProducts.appendChild(divA);
+          }
         });
       });
     }
 
-    // Remover produto
-    function removerProduto(id) {
-      if (confirm("Deseja remover este produto?")) {
-        db.ref("products/" + id).remove();
+    // Autenticação
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        statusText.innerText = "Logado como: " + user.email;
+        loginSection.style.display = "none";
+        mainContent.style.display = "block";
+
+        if (adminEmails.includes(user.email)) {
+          adminPanel.style.display = "block";
+        } else {
+          adminPanel.style.display = "none";
+        }
+
+        carregarProdutos(user);
+      } else {
+        statusText.innerText = "Não logado";
+        loginSection.style.display = "block";
+        mainContent.style.display = "none";
+        adminPanel.style.display = "none";
       }
-    }
+    });
   </script>
+</head>
+<body>
+  <header>
+    <h1>🟢 Blox Bux</h1>
+  </header>
+
+  <!-- Login -->
+  <div id="loginSection">
+    <h2>Entrar ou Cadastrar</h2>
+    <input type="email" id="email" placeholder="E-mail">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="loginEmail()">Login</button>
+    <button onclick="registerEmail()">Cadastrar-se</button>
+    <button onclick="loginGoogle()">Login com Google</button>
+  </div>
+
+  <!-- Conteúdo -->
+  <div id="mainContent" style="display:none;">
+    <div id="sidebar">
+      <h3>Conta</h3>
+      <p id="status">Não logado</p>
+      <button onclick="logout()">Sair</button>
+    </div>
+
+    <div id="products">
+      <h2>Produtos</h2>
+      <div id="productList"></div>
+    </div>
+  </div>
+
+  <!-- Painel Admin -->
+  <div id="adminPanel" style="display:none;">
+    <h3>Painel Admin</h3>
+    <input type="text" id="prodName" placeholder="Nome do Produto">
+    <input type="text" id="prodDesc" placeholder="Descrição">
+    <input type="number" id="prodPrice" placeholder="Preço">
+    <button onclick="addProduct()">Adicionar Produto</button>
+    <h4>Meus Produtos</h4>
+    <div id="adminProducts"></div>
+  </div>
 </body>
 </html>
