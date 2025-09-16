@@ -3,7 +3,7 @@ import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, sig
 import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY_AQUI",
+  apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
   authDomain: "blox-bux.firebaseapp.com",
   databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
   projectId: "blox-bux",
