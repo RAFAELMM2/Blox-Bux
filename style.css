@@ -1,151 +1,75 @@
 /* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+body { background: linear-gradient(135deg,#0d0d0d,#222); min-height:100vh; display:flex; align-items:center; justify-content:center; }
 
-body {
-  background: linear-gradient(135deg, #1d3557, #457b9d);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Tela de Login */
+/* Login */
 .login-container {
-  background: white;
+  background: #1a1a1a;
   padding: 30px;
   border-radius: 20px;
   width: 90%;
   max-width: 350px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  text-align:center;
+  box-shadow: 0 8px 25px rgba(0,255,204,0.2);
   animation: fadeIn 0.8s ease;
 }
-
-.logo {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #1d3557;
-}
-
+.logo { font-size:2rem; margin-bottom:20px; color:#00ffcc; }
 input {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
   border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 1rem;
-  transition: 0.3s;
+  border: 1px solid #333;
+  background:#111;
+  color:#eee;
+  font-size:1rem;
+  outline:none;
+  transition:0.3s;
 }
-
-input:focus {
-  border-color: #457b9d;
-  outline: none;
-  transform: scale(1.03);
-}
-
+input:focus { border-color:#00ffcc; transform: scale(1.03); }
 button {
   width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  border: none;
-  border-radius: 12px;
-  background: #457b9d;
-  color: white;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: 0.3s;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:12px;
+  background:#00ffcc;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
 }
-
-button:hover {
-  background: #1d3557;
-  transform: scale(1.05);
-}
-
-.cadastro {
-  margin-top: 15px;
-  font-size: 0.9rem;
-}
-.cadastro a {
-  color: #457b9d;
-  text-decoration: none;
-  font-weight: bold;
-}
+button:hover { background:#00cc99; transform: scale(1.05); }
+.google-btn { background:#db4437; color:white; }
+.google-btn:hover { background:#c23321; }
 
 /* App */
-.hidden {
-  display: none;
-}
-
+.hidden { display:none; }
 .app-container {
-  background: #f9f9f9;
-  border-radius: 25px;
-  width: 100%;
-  max-width: 450px;
-  min-height: 90vh;
-  overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  background:#111;
+  border-radius:25px;
+  width:100%;
+  max-width:450px;
+  min-height:90vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
   animation: slideUp 0.8s ease;
-  display: flex;
-  flex-direction: column;
 }
+header { background:#222; color:#00ffcc; padding:20px; text-align:center; font-size:1.3rem; }
+.menu { display:flex; justify-content:space-around; background:#111; border-bottom:1px solid #333; }
+.menu-btn { flex:1; padding:15px 0; font-size:1rem; border:none; background:none; cursor:pointer; color:#eee; transition:0.3s; }
+.menu-btn.active { border-bottom:3px solid #00ffcc; font-weight:bold; color:#00ffcc; }
+.conteudo { flex:1; padding:20px; }
+.tab { display:none; animation: fadeIn 0.5s ease; }
+.tab.active { display:block; }
+#productList { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:15px; }
 
-header {
-  background: #457b9d;
-  color: white;
-  padding: 20px;
-  text-align: center;
-  font-size: 1.3rem;
-}
-
-.menu {
-  display: flex;
-  justify-content: space-around;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-}
-
-.menu-btn {
-  flex: 1;
-  padding: 15px 0;
-  font-size: 1rem;
-  border: none;
-  background: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.menu-btn.active {
-  border-bottom: 3px solid #457b9d;
-  font-weight: bold;
-  color: #457b9d;
-}
-
-.conteudo {
-  flex: 1;
-  padding: 20px;
-}
-
-.tab {
-  display: none;
-  animation: fadeIn 0.5s ease;
-}
-
-.tab.active {
-  display: block;
-}
+/* Cards Produto */
+.product { background:#1e1e1e; padding:15px; border-radius:12px; text-align:center; transition:0.3s; cursor:pointer; }
+.product:hover { transform: scale(1.05); box-shadow:0 0 15px #00ffcc; }
+.product h3, .product p { color:#eee; }
 
 /* Animações */
-@keyframes fadeIn {
-  from {opacity: 0; transform: scale(0.95);}
-  to {opacity: 1; transform: scale(1);}
-}
-
-@keyframes slideUp {
-  from {opacity: 0; transform: translateY(50px);}
-  to {opacity: 1; transform: translateY(0);}
-}
+@keyframes fadeIn { from{opacity:0;transform:scale(0.95);} to{opacity:1;transform:scale(1);} }
+@keyframes slideUp { from{opacity:0;transform:translateY(50px);} to{opacity:1;transform:translateY(0);} }
