@@ -12,25 +12,20 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <h1 class="logo">Blox <span>Bux</span></h1>
-
     <button id="adminBtn" class="admin-toggle">Painel Admin</button>
-
     <div class="tabs">
       <button id="tabProfile" class="active">Perfil</button>
       <button id="tabProducts">Produtos</button>
     </div>
-
     <div class="tabContent" id="profileTab">
       <h2>Minha Conta</h2>
       <p id="userEmail">Email: -</p>
       <button id="logoutBtn">Sair</button>
     </div>
-
     <div class="tabContent" id="productsTab" style="display:none;">
-      <h2>Meus Produtos</h2>
-      <p>Visualize todos os produtos disponíveis abaixo.</p>
+      <h2>Produtos</h2>
+      <p>Visualize todos os produtos abaixo.</p>
     </div>
-
     <div class="adminPanel" id="adminPanel" style="display:none;">
       <h2>Admin</h2>
       <input type="text" id="productName" placeholder="Nome do Produto">
@@ -38,12 +33,10 @@
       <input type="text" id="productImage" placeholder="URL da Imagem">
       <button id="addProductBtn">Adicionar Produto</button>
     </div>
-
   </div>
 
-  <!-- Grid de Produtos -->
+  <!-- Grid produtos -->
   <div class="products-grid" id="productsGrid"></div>
-
 </div>
 
 <script type="module">
@@ -64,9 +57,7 @@ const adminBtn = document.getElementById("adminBtn");
 adminBtn.addEventListener("click", ()=>{
   if(currentUser && currentUser.email==="marymartins5821@gmail.com"){
     adminPanel.style.display = adminPanel.style.display==="none" ? "block" : "none";
-  }else{
-    alert("Apenas o admin pode acessar!");
-  }
+  } else {alert("Apenas o admin pode acessar!");}
 });
 
 // Tabs
@@ -100,10 +91,9 @@ document.getElementById("addProductBtn").addEventListener("click", ()=>{
   const price = document.getElementById("productPrice").value;
   const image = document.getElementById("productImage").value;
   if(name && price && image){
-    push(productsRef,{name,price,image});
-    document.getElementById("productName").value="";
-    document.getElementById("productPrice").value="";
-    document.getElementById("productImage").value="";
+    push(productsRef,{name,price,image})
+      .then(()=>{document.getElementById("productName").value=""; document.getElementById("productPrice").value=""; document.getElementById("productImage").value="";})
+      .catch(err=>alert("Erro ao adicionar produto: "+err.message));
   }
 });
 
