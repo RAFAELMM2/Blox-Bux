@@ -3,177 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blox Bux - Loja</title>
+  <title>MineBank</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC3wm5X7fBXjC8hUQv4sRdHS-v74KWIBC4",
-      authDomain: "blox-bux.firebaseapp.com",
-      databaseURL: "https://blox-bux-default-rtdb.firebaseio.com",
-      projectId: "blox-bux",
-      storageBucket: "blox-bux.appspot.com",
-      messagingSenderId: "2964601609",
-      appId: "1:2964601609:web:67ee85c8174825aee471d8",
-      measurementId: "G-W2BW6GDCSY"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    const db = getDatabase(app);
-
-    const adminEmails = ["marymartins5821@gmail.com", "jp9877475@gmail.com"];
-
-    // Referências
-    const loginSection = document.getElementById("loginSection");
-    const mainContent = document.getElementById("mainContent");
-    const statusText = document.getElementById("status");
-    const productList = document.getElementById("productList");
-    const adminPanel = document.getElementById("adminPanel");
-    const adminProducts = document.getElementById("adminProducts");
-
-    // Login com Google
-    window.loginGoogle = () => {
-      signInWithPopup(auth, provider).catch(err => alert(err.message));
-    };
-
-    // Cadastro com email
-    window.registerEmail = () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      createUserWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
-    };
-
-    // Login com email
-    window.loginEmail = () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      signInWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
-    };
-
-    // Logout
-    window.logout = () => {
-      signOut(auth);
-    };
-
-    // Adicionar produto
-    window.addProduct = () => {
-      const name = document.getElementById("prodName").value;
-      const price = document.getElementById("prodPrice").value;
-      const desc = document.getElementById("prodDesc").value;
-
-      if (name && price) {
-        push(ref(db, "products"), { name, price, desc }).then(() => {
-          document.getElementById("prodName").value = "";
-          document.getElementById("prodPrice").value = "";
-          document.getElementById("prodDesc").value = "";
-        });
-      }
-    };
-
-    // Carregar produtos
-    function carregarProdutos(user) {
-      onValue(ref(db, "products"), (snapshot) => {
-        productList.innerHTML = "";
-        adminProducts.innerHTML = "";
-
-        snapshot.forEach(child => {
-          const prod = child.val();
-          const key = child.key;
-
-          // card público
-          const div = document.createElement("div");
-          div.className = "product";
-          div.innerHTML = `
-            <h3>${prod.name}</h3>
-            <p>${prod.desc || ""}</p>
-            <p><strong>R$ ${prod.price}</strong></p>
-            <button onclick="window.open('https://wa.me/5548996354447?text=Quero%20comprar%20${encodeURIComponent(prod.name)}','_blank')">Comprar</button>
-          `;
-          productList.appendChild(div);
-
-          // card admin
-          if (user && adminEmails.includes(user.email)) {
-            const divA = document.createElement("div");
-            divA.className = "product";
-            divA.innerHTML = `
-              <h3>${prod.name}</h3>
-              <p>${prod.desc || ""}</p>
-              <p><strong>R$ ${prod.price}</strong></p>
-              <button onclick="remove(ref(db, 'products/${key}'))">Remover</button>
-            `;
-            adminProducts.appendChild(divA);
-          }
-        });
-      });
-    }
-
-    // Autenticação
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        statusText.innerText = "Logado como: " + user.email;
-        loginSection.style.display = "none";
-        mainContent.style.display = "block";
-
-        if (adminEmails.includes(user.email)) {
-          adminPanel.style.display = "block";
-        } else {
-          adminPanel.style.display = "none";
-        }
-
-        carregarProdutos(user);
-      } else {
-        statusText.innerText = "Não logado";
-        loginSection.style.display = "block";
-        mainContent.style.display = "none";
-        adminPanel.style.display = "none";
-      }
-    });
-  </script>
 </head>
 <body>
-  <header>
-    <h1>🟢 Blox Bux</h1>
-  </header>
-
-  <!-- Login -->
-  <div id="loginSection">
-    <h2>Entrar ou Cadastrar</h2>
-    <input type="email" id="email" placeholder="E-mail">
-    <input type="password" id="password" placeholder="Senha">
-    <button onclick="loginEmail()">Login</button>
-    <button onclick="registerEmail()">Cadastrar-se</button>
-    <button onclick="loginGoogle()">Login com Google</button>
+  <!-- Tela de Login -->
+  <div class="login-container" id="login-container">
+    <h1 class="logo">MineBank</h1>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Digite seu e-mail" required>
+      <input type="password" id="password" placeholder="Digite sua senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="cadastro">Não tem conta? <a href="#">Cadastre-se</a></p>
   </div>
 
-  <!-- Conteúdo -->
-  <div id="mainContent" style="display:none;">
-    <div id="sidebar">
-      <h3>Conta</h3>
-      <p id="status">Não logado</p>
-      <button onclick="logout()">Sair</button>
-    </div>
+  <!-- Menu Principal -->
+  <div class="app-container hidden" id="app-container">
+    <header>
+      <h2>Bem-vindo ao MineBank</h2>
+    </header>
 
-    <div id="products">
-      <h2>Produtos</h2>
-      <div id="productList"></div>
-    </div>
+    <nav class="menu">
+      <button class="menu-btn active" data-tab="saldo">💰 Saldo</button>
+      <button class="menu-btn" data-tab="depositar">📥 Depositar</button>
+      <button class="menu-btn" data-tab="sacar">📤 Sacar</button>
+      <button class="menu-btn" data-tab="perfil">👤 Perfil</button>
+    </nav>
+
+    <main class="conteudo">
+      <section class="tab active" id="saldo">
+        <h3>Seu Saldo</h3>
+        <p id="saldo-atual">R$ 0,00</p>
+      </section>
+
+      <section class="tab" id="depositar">
+        <h3>Depositar</h3>
+        <input type="number" placeholder="Valor" id="valor-deposito">
+        <button>Confirmar</button>
+      </section>
+
+      <section class="tab" id="sacar">
+        <h3>Sacar</h3>
+        <input type="number" placeholder="Valor" id="valor-saque">
+        <button>Confirmar</button>
+      </section>
+
+      <section class="tab" id="perfil">
+        <h3>Perfil</h3>
+        <p>Email: <span id="user-email"></span></p>
+        <button id="logout">Sair</button>
+      </section>
+    </main>
   </div>
 
-  <!-- Painel Admin -->
-  <div id="adminPanel" style="display:none;">
-    <h3>Painel Admin</h3>
-    <input type="text" id="prodName" placeholder="Nome do Produto">
-    <input type="text" id="prodDesc" placeholder="Descrição">
-    <input type="number" id="prodPrice" placeholder="Preço">
-    <button onclick="addProduct()">Adicionar Produto</button>
-    <h4>Meus Produtos</h4>
-    <div id="adminProducts"></div>
-  </div>
+  <script src="script.js"></script>
 </body>
 </html>
